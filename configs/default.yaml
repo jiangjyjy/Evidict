@@ -1,0 +1,56 @@
+seed: 42
+output_dir: outputs/default
+
+model:
+  backbone: BioMistral/BioMistral-7B
+  nli: microsoft/deberta-v3-large
+  linker: cambridgeltl/SapBERT-from-PubMedBERT-fulltext
+  lora_r: 64
+  lora_alpha: 16
+  lora_dropout: 0.05
+
+data:
+  raw: data/raw/claims.jsonl
+  train: data/processed/train.jsonl
+  dev: data/processed/dev.jsonl
+  test: data/processed/test.jsonl
+  ontology: data/processed/ontology_neighbours.json
+  prm_labels: data/processed/prm_step_labels.json
+
+retrieval:
+  top_k_per_source: 8
+  rrf_k: 60
+
+energy:
+  margin: 0.5
+  dpo_beta: 0.1
+  nce_temperature: 1.0
+  max_length: 1536
+  max_evidence: 32
+
+prm:
+  n_traces: 8
+  n_rollouts: 8
+  max_steps: 6
+  value_weight: 0.5
+  keep_threshold: 0.5
+  temperature: 0.7
+
+fusion:
+  lambda_c: 1.0
+  lambda_p: 1.0
+  lambda_nce: 0.5
+  lambda_rank: 0.3
+  lambda_dpo: 0.5
+  lambda_contr: 0.3
+  lambda_prm: 0.5
+
+optim:
+  epochs: 3
+  batch_size: 8
+  lr: 2.0e-5
+  weight_decay: 0.01
+  max_grad_norm: 1.0
+
+conformal:
+  alpha: 0.10          # groups: 4 claim types x 3 source profiles
